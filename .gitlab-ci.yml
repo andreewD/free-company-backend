@@ -7,7 +7,7 @@ before_script:
 
 stages:
   - dev
-  - prod
+
 
 dev:
   type: deploy
@@ -17,12 +17,3 @@ dev:
     - dpl --provider=heroku --app=$HEROKU_APP_NAME_DEV --api-key=$HEROKU_API_KEY
   only:
     - dev
-
-prod:
-  type: deploy
-  stage: prod
-  image: ruby:latest
-  script:
-    - dpl --provider=heroku --app=$HEROKU_APP_NAME_DEV --api-key=$HEROKU_API_KEY
-  only:
-    - prod
