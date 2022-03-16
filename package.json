@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "main": "src/index.ts",
   "description": "imcetron backend",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "build:dev": "webpack --mode development",
     "build": "webpack --mode production",
