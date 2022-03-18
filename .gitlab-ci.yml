@@ -8,6 +8,7 @@ before_script:
 # retry deploy
 stages:
   - main
+  - dev
 
 main:
   type: deploy
@@ -17,3 +18,12 @@ main:
     - dpl --provider=heroku --app=$HEROKU_APP_NAME_PROD --api-key=$HEROKU_API_KEY
   only:
     - main
+
+dev:
+  type: deploy
+  stage: dev
+  image: ruby:latest
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME_DEV --api-key=$HEROKU_API_KEY
+  only:
+    - dev
