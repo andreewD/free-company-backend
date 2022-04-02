@@ -1,5 +1,5 @@
 import httpErrors from 'http-errors'
-import { User } from 'database'
+import { UserModel } from 'database'
 import { errorHandling } from './utils'
 import { GE } from 'utils'
 import { v4 as uuidv4 } from 'uuid'
@@ -36,23 +36,9 @@ class UserService {
         try {
 
             const { id } = this._args as DtoUserFind
-            const users = await User.findAll({
-                where: {
-                    id: id
-                },
-                attributes: ['id', 'names', 'lastname', 'email', 'deleted', 'createdAt', 'updatedAt']
-            })
+            const users = await UserModel.findById(id)
 
-            const response: UserResult[] = users.map(user => ({
-                id: user?.id,
-                names: user?.names || '',
-                lastname: user?.lastname || '',
-                email: user?.email || '',
-                deleted: user?.deleted,
-                createdAt: user?.createdAt,
-                updatetAt: user?.updatedAt,
-
-            }))
+            const response = users
             return response
         } catch (error) {
             return errorHandling(error, GE.INTERNAL_SERVER_ERROR)
@@ -60,17 +46,8 @@ class UserService {
     }
     private async _getAll(): Promise<UserResult[] | any> {
         try {
-            const users = await User.findAll()
-            const response: UserResult[] = users.map(user => ({
-                id: user?.id,
-                names: user?.names || '',
-                lastname: user?.lastname || '',
-                email: user?.email || '',
-                deleted: user.deleted,
-                createdAt: user.createdAt,
-                updatetAt: user.updatedAt,
-
-            }))
+            const users = await UserModel.find({})
+            const response = users
             return response
         } catch (error) {
             return errorHandling(error, GE.INTERNAL_SERVER_ERROR)
@@ -80,25 +57,15 @@ class UserService {
         try {
             const { names, lastname, email, password } = this._args as DtoUserNew
             const now = new Date()
-            const users = await User.create({
-                id: uuidv4(),
+            const users = new UserModel({
                 names: names,
                 lastname: lastname,
                 email: email,
-                password: await bcrypt.hash(password, 10),
-                deleted: 0,
-                createdAt: now,
-                updatedAt: now
+                password: password,
+                deleted: false
             })
-            const response = {
-                'id': users.id,
-                'names': users.names,
-                'lastname': users.lastname,
-                'email': users.email,
-                'createdAt': users.createdAt,
-                'updatedAt': users.updatedAt
-            }
-            return response
+            await users.save()
+            return users
 
         } catch (error) {
             return errorHandling(error, GE.INTERNAL_SERVER_ERROR)

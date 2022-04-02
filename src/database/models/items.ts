@@ -1,74 +1,70 @@
-import { DataTypes, Model, ModelCtor, Optional, Sequelize } from "sequelize";
-
+import { model, Schema } from 'mongoose'
 interface ItemAttributes {
-    id: string
-    productName: string
-    names?: string
-    category?: number
-    description?: string
-    details1: string
-    details2: string
-    brand: string
-    images: Array<string>
-    dataSheet: string
-    deleted: number
+    id: String
+
+    names?: String
+    category?: String
+    description?: String
+    details1: String
+    details2?: String
+    brand: String
+    images: Array<String>
+    dataSheet: String
+    deleted: Boolean
     createdAt: Date
     updatedAt: Date
 
 }
 
-type ItemCreationAttributes = Optional<ItemAttributes, 'id'>
-interface ItemInstance
-    extends Model<ItemAttributes, ItemCreationAttributes>,
-    ItemAttributes {
+const Item = new Schema<ItemAttributes>(
+    {
 
-}
-const itemFactory = (sequelize: Sequelize): ModelCtor<ItemInstance> => sequelize.define<ItemInstance>(
-    'Items', {
-    id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        primaryKey: true
+        names: {
+            type: String
+        },
+        category: {
+            type: String
+        },
+        description: {
+            type: String
+        },
+        details1: {
+            type: String
+        },
+        details2: {
+            type: String
+        },
+        brand: {
+            type: String
+        },
+        images: {
+            type: [{ type: String }]
+        },
+        dataSheet: {
+            type: String
+        },
+        deleted: {
+            type: Boolean
+        }
     },
-    productName: {
-        type: DataTypes.STRING
-    },
-    names: {
-        type: DataTypes.STRING
-    },
-    category: {
-        type: DataTypes.NUMBER
-    },
-    description: {
-        type: DataTypes.STRING
-    },
-    details1: {
-        type: DataTypes.STRING
-    },
-    details2: {
-        type: DataTypes.STRING
-    },
-    brand: {
-        type: DataTypes.STRING
-    },
-    images: {
-        type: DataTypes.ARRAY(DataTypes.STRING)
-    },
-    dataSheet: {
-        type: DataTypes.STRING
-    },
-    deleted: {
-        type: DataTypes.TINYINT
-    },
-    createdAt: {
-        type: DataTypes.DATE
-    },
-    updatedAt: {
-        type: DataTypes.DATE
-    },
-}, {
-    tableName: 'Items'
-}
+    {
+        timestamps: {
+            createdAt: true,
+            updatedAt: true
+        },
+        versionKey: false,
+        toJSON: {
+            transform(_, ret) {
+                ret.id = ret._id.toString()
+                ret.updatedAt = ret.updatedAt.toISOString()
+                delete ret._id
+                delete ret.__v
+            },
+            virtuals: true
+        }
+    }
 )
 
-export { ItemCreationAttributes, ItemInstance, itemFactory }
+const ItemModel = model<ItemAttributes>('Items', Item)
+
+export { ItemModel }

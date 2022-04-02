@@ -1,5 +1,5 @@
 import httpErrors from 'http-errors'
-import { Categories } from 'database'
+import { CategoriesModel } from 'database'
 import { errorHandling } from './utils'
 import { GE } from 'utils'
 import { v4 as uuidv4 } from 'uuid'
@@ -36,19 +36,9 @@ class CategoriesService {
         try {
 
             const { id } = this._args as DtoCategoriesFind
-            const Categoriess = await Categories.findAll({
-                where: {
-                    id: parseInt(id)
-                },
-                attributes: ['id', 'name']
-            })
+            const Categoriess = await CategoriesModel.findById(id)
 
-            const response: CategoriesResult[] = Categoriess.map(Categories => ({
-                id: Categories?.id,
-                name: Categories?.name || '',
-
-
-            }))
+            const response = Categoriess?.toJSON()
             return response
         } catch (error) {
             return errorHandling(error, GE.INTERNAL_SERVER_ERROR)
@@ -56,7 +46,7 @@ class CategoriesService {
     }
     private async _getAll(): Promise<CategoriesResult[] | any> {
         try {
-            const Categoriess = await Categories.findAll()
+            const Categoriess = await CategoriesModel.find({})
             const response: CategoriesResult[] = Categoriess.map(Categories => ({
                 id: Categories?.id,
                 name: Categories?.name || '',
@@ -70,22 +60,13 @@ class CategoriesService {
     }
     private async _newCategories(): Promise<CategoriesResult[] | any> {
         try {
-            const { id, name } = this._args as DtoCategoriesNew
-            const now = new Date()
-            const Categoriess = await Categories.create({
-                id: id,
-                name: name,
-                createdAt: now,
-                updatedAt: now
+            const { name } = this._args as DtoCategoriesNew
 
+            const Categoriess = new CategoriesModel({
+                name: name
             })
-            const response = {
-                'id': Categoriess.id,
-                'name': Categoriess.name,
-                'createdAt': Categoriess.createdAt,
-                'updatedAt': Categoriess.updatedAt
-            }
-            return response
+            await Categoriess.save()
+            return Categoriess
 
         } catch (error) {
             return errorHandling(error, GE.INTERNAL_SERVER_ERROR)

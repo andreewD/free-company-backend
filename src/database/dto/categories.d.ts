@@ -8,7 +8,7 @@ interface DtoCategoriesFind {
 
 // Interface for new Categoriess
 interface DtoCategoriesNew {
-    id?: number
+    // id?: number
     name?: string
 
 }
