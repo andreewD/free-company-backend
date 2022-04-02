@@ -6,8 +6,12 @@ export const itemSchema = Joi.object().keys({
 
 export const newItemSchema = Joi.object().keys({
     names: Joi.string().required(),
-    category: Joi.number().required(),
+    category: Joi.string().required(),
     description: Joi.string().required(),
     images: Joi.array().required(),
-    dataSheet: Joi.string().required()
+    dataSheet: Joi.string().required(),
+    details1: Joi.string().allow(null, ''),
+    details2: Joi.string().allow(null, ''),
+    brand: Joi.string().required(),
+    deleted: Joi.boolean().required()
 })

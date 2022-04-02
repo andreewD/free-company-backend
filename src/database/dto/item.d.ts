@@ -11,6 +11,9 @@ interface DtoItemNew {
     names?: string
     category?: number
     description?: string
+    details1?: string
+    details2?: string
+    brand?: string
     images?: Array<string>
     dataSheet?: string
 }

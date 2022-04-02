@@ -1,53 +1,63 @@
-import { DataTypes, Model, ModelCtor, Optional, Sequelize } from "sequelize";
+import { model, Schema } from 'mongoose'
 
 interface UserAttributes {
-    id: string
-    names?: string
-    lastname?: string
-    email?: string
-    password?: string
-    deleted: number
+    id: String
+    names?: String
+    lastname?: String
+    email?: String
+    password?: String
+    deleted: Boolean
     createdAt: Date
     updatedAt: Date
 }
 
-type UserCreationAttributes = Optional<UserAttributes, 'id'>
-interface UserInstance
-    extends Model<UserAttributes, UserCreationAttributes>,
-    UserAttributes {
-
-}
-const userFactory = (sequelize: Sequelize): ModelCtor<UserInstance> => sequelize.define<UserInstance>(
-    'Users', {
-    id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        primaryKey: true
+const User = new Schema<UserAttributes>(
+    {
+        names: {
+            required: true,
+            type: String
+        },
+        lastname: {
+            required: true,
+            type: String
+        },
+        email: {
+            required: true,
+            type: String
+        },
+        password: {
+            required: true,
+            type: String
+        },
+        deleted: {
+            required: true,
+            type: Boolean
+        }
     },
-    names: {
-        type: DataTypes.STRING
-    },
-    lastname: {
-        type: DataTypes.STRING
-    },
-    email: {
-        type: DataTypes.STRING
-    },
-    password: {
-        type: DataTypes.STRING
-    },
-    deleted: {
-        type: DataTypes.TINYINT
-    },
-    createdAt: {
-        type: DataTypes.DATE
-    },
-    updatedAt: {
-        type: DataTypes.DATE
-    },
-}, {
-    tableName: 'Users'
-}
+    {
+        timestamps: {
+            createdAt: true,
+            updatedAt: true
+        },
+        versionKey: false,
+        toJSON: {
+            transform(_, ret) {
+                ret.id = ret._id.toString()
+                ret.updatedAt = ret.updatedAt.toISOString()
+                delete ret._id
+                delete ret.__v
+            },
+            virtuals: true
+        }
+    }
 )
 
-export { UserCreationAttributes, UserInstance, userFactory }
+const UserModel = model<UserAttributes>('users', User)
+
+export { UserModel }
+
+
+
+
+
+

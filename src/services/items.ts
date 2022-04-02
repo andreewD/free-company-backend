@@ -1,8 +1,9 @@
 import httpErrors from 'http-errors'
-import { Item } from 'database'
+import { ItemModel } from 'database'
 import { errorHandling } from './utils'
 import { GE } from 'utils'
 import { v4 as uuidv4 } from 'uuid'
+import { Item } from 'network/routes'
 
 type Process = {
     type: 'getOne' | 'getAll' | 'newItem' | 'deleteItem' | 'updateItem'
@@ -36,25 +37,9 @@ class ItemService {
         try {
 
             const { id } = this._args as DtoItemFind
-            const Items = await Item.findAll({
-                where: {
-                    id: id
-                },
-                attributes: ['id', 'names', 'category', 'images', 'dataSheet', 'deleted', 'createdAt', 'updatedAt']
-            })
+            const Items = await ItemModel.findById(id)
 
-            const response: ItemResult[] = Items.map(Item => ({
-                id: Item?.id,
-                names: Item?.names || '',
-                category: Item?.category || 0,
-                description: Item?.description || '',
-                images: Item?.images || [''],
-                dataSheet: Item?.dataSheet || '',
-                deleted: Item?.deleted,
-                createdAt: Item?.createdAt,
-                updatedAt: Item?.updatedAt,
-
-            }))
+            const response = Items
             return response
         } catch (error) {
             return errorHandling(error, GE.INTERNAL_SERVER_ERROR)
@@ -62,19 +47,8 @@ class ItemService {
     }
     private async _getAll(): Promise<ItemResult[] | any> {
         try {
-            const Items = await Item.findAll()
-            const response: ItemResult[] = Items.map(Item => ({
-                id: Item?.id,
-                names: Item?.names || '',
-                category: Item?.category || 0,
-                description: Item?.description || '',
-                images: Item?.images || [''],
-                dataSheet: Item?.dataSheet || '',
-                deleted: Item?.deleted,
-                createdAt: Item?.createdAt,
-                updatedAt: Item?.updatedAt,
-
-            }))
+            const Items = await ItemModel.find({})
+            const response = Items
             return response
         } catch (error) {
             return errorHandling(error, GE.INTERNAL_SERVER_ERROR)
@@ -82,30 +56,24 @@ class ItemService {
     }
     private async _newItem(): Promise<ItemResult[] | any> {
         try {
-            const { names, category, description, images, dataSheet } = this._args as DtoItemNew
-            const now = new Date()
-            const Items = await Item.create({
-                id: uuidv4(),
+            const { names, category, description, details1, details2, brand, images, dataSheet } = this._args as DtoItemNew
+
+            const Items = new ItemModel({
+
                 names: names,
-                category: category || 0,
-                description: description || '',
-                images: images || [''],
-                dataSheet: dataSheet || '',
-                deleted: 0,
-                createdAt: now,
-                updatedAt: now,
+                category: category,
+                description: description,
+                images: images,
+                details1: details1,
+                details2: details2,
+                brand: brand,
+                dataSheet: dataSheet,
+                deleted: false,
+
 
             })
-            const response = {
-                'id': Items.id,
-                'names': Items.names,
-                'category': Items.category,
-                "description": Items.description,
-                'images': Items.images,
-                'createdAt': Items.createdAt,
-                'updatedAt': Items.updatedAt
-            }
-            return response
+            await Items.save()
+            return Items
 
         } catch (error) {
             return errorHandling(error, GE.INTERNAL_SERVER_ERROR)

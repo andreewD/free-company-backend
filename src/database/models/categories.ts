@@ -1,38 +1,40 @@
-import { DataTypes, Model, ModelCtor, Optional, Sequelize } from "sequelize";
+import { model, Schema } from 'mongoose'
 
 interface CategoriesAttributes {
-    id: number
+    id: String
     name?: string
     createdAt: Date
     updatedAt: Date
 
 }
 
-type CategoriesCreationAttributes = Optional<CategoriesAttributes, 'id'>
-interface CategoriesInstance
-    extends Model<CategoriesAttributes, CategoriesCreationAttributes>,
-    CategoriesAttributes {
 
-}
-const categoriesFactory = (sequelize: Sequelize): ModelCtor<CategoriesInstance> => sequelize.define<CategoriesInstance>(
-    'Categories', {
-    id: {
-        type: DataTypes.NUMBER,
-        allowNull: false,
-        primaryKey: true
+const Categories = new Schema<CategoriesAttributes>(
+    {
+        name: {
+            required: true,
+            type: String
+        }
     },
-    name: {
-        type: DataTypes.STRING
-    }, createdAt: {
-        type: DataTypes.DATE
-    },
-    updatedAt: {
-        type: DataTypes.DATE
-    },
-
-}, {
-    tableName: 'Categories'
-}
+    {
+        timestamps: {
+            createdAt: true,
+            updatedAt: true
+        },
+        versionKey: false,
+        toJSON: {
+            transform(_, ret) {
+                ret.id = ret._id.toString()
+                ret.updatedAt = ret.updatedAt.toISOString()
+                delete ret._id
+                delete ret.__v
+            },
+            virtuals: true
+        }
+    }
 )
 
-export { CategoriesCreationAttributes, CategoriesInstance, categoriesFactory }
+const CategoriesModel = model<CategoriesAttributes>('categories', Categories)
+
+export { CategoriesModel }
+

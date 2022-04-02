@@ -2,10 +2,13 @@ import express from 'express'
 import morgan from 'morgan'
 import { applyRoutes } from './router'
 import cors from 'cors'
-import { sequelizeConnection } from 'libs'
+import mongoose from 'mongoose'
+
+const PORT = (process.env.PORT as string) || '1996'
 
 class Server {
   private _app: express.Application
+  private _connection: mongoose.Connection | undefined
 
   constructor() {
     this._app = express()
@@ -36,24 +39,47 @@ class Server {
     applyRoutes(this._app)
   }
 
-  private async _sequelize(): Promise<void> {
-    try {
-      await sequelizeConnection.authenticate()
-      console.log('Database connection established')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      console.error(e.message)
-      process.exit(1)
+  private async _mongo(): Promise<void> {
+    this._connection = mongoose.connection
+    const connection = {
+      keepAlive: true,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
     }
+    this._connection.on('connected', () => {
+      console.log('Mongo connection established.')
+    })
+    this._connection.on('reconnected', () => {
+      console.log('Mongo connection reestablished')
+    })
+    this._connection.on('disconnected', () => {
+      console.log('Mongo connection disconnected')
+      console.log('Trying to reconnected to Mongo...')
+      setTimeout(() => {
+        mongoose.connect(process.env.MONGO_URI as string, {
+          ...connection,
+          connectTimeoutMS: 3000,
+          socketTimeoutMS: 3000
+        })
+      }, 3000)
+    })
+    this._connection.on('close', () => {
+      console.log('Mongo connection closed')
+    })
+    this._connection.on('error', (e: Error) => {
+      console.log('Mongo connection error:')
+      console.error(e)
+    })
+    await mongoose.connect(process.env.MONGO_URI as string, connection)
   }
 
   public start(): void {
-    this._app.listen(process.env.PORT, () => {
-      console.log(`Server running at port ${process.env.PORT}`)
+    this._app.listen(PORT, () => {
+      console.log(`Server running at port ${PORT}`)
     })
 
     try {
-      this._sequelize()
+      this._mongo()
     } catch (e) {
       console.error(e)
     }

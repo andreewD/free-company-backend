@@ -5,7 +5,7 @@ export const categoriesSchema = Joi.object().keys({
 })
 
 export const newcategoriesSchema = Joi.object().keys({
-    id: Joi.number().required(),
+
     name: Joi.string().required(),
 
 })
