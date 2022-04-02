@@ -2,9 +2,13 @@ import { DataTypes, Model, ModelCtor, Optional, Sequelize } from "sequelize";
 
 interface ItemAttributes {
     id: string
+    productName: string
     names?: string
     category?: number
     description?: string
+    details1: string
+    details2: string
+    brand: string
     images: Array<string>
     dataSheet: string
     deleted: number
@@ -26,6 +30,9 @@ const itemFactory = (sequelize: Sequelize): ModelCtor<ItemInstance> => sequelize
         allowNull: false,
         primaryKey: true
     },
+    productName: {
+        type: DataTypes.STRING
+    },
     names: {
         type: DataTypes.STRING
     },
@@ -33,6 +40,15 @@ const itemFactory = (sequelize: Sequelize): ModelCtor<ItemInstance> => sequelize
         type: DataTypes.NUMBER
     },
     description: {
+        type: DataTypes.STRING
+    },
+    details1: {
+        type: DataTypes.STRING
+    },
+    details2: {
+        type: DataTypes.STRING
+    },
+    brand: {
         type: DataTypes.STRING
     },
     images: {
