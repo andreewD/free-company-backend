@@ -15,3 +15,11 @@ export const newItemSchema = Joi.object().keys({
     brand: Joi.string().required(),
     deleted: Joi.boolean().required()
 })
+
+export const getItemByBrandSchema = Joi.object().keys({
+    brand: Joi.string().required()
+})
+
+export const getItemByCategorySchema = Joi.object().keys({
+    category: Joi.string().required()
+})

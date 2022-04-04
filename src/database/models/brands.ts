@@ -7,7 +7,7 @@ interface CategoriesAttributes {
     updatedAt: Date;
 }
 
-const Categories = new Schema<CategoriesAttributes>(
+const Brands = new Schema<CategoriesAttributes>(
     {
         name: {
             required: true,
@@ -33,6 +33,6 @@ const Categories = new Schema<CategoriesAttributes>(
     }
 );
 
-const CategoriesModel = model<CategoriesAttributes>("categories", Categories);
+const BrandsModel = model<CategoriesAttributes>("brands", Brands);
 
-export { CategoriesModel };
+export { BrandsModel };

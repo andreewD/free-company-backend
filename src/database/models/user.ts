@@ -27,6 +27,7 @@ const User = new Schema<UserAttributes>(
         },
         password: {
             required: true,
+            select: false,
             type: String
         },
         deleted: {
