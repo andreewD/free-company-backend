@@ -1,70 +1,67 @@
-import { model, Schema } from 'mongoose'
+import { model, Schema } from "mongoose";
 interface ItemAttributes {
-    id: String
-
-    names?: String
-    category?: String
-    description?: String
-    details1: String
-    details2?: String
-    brand: String
-    images: Array<String>
-    dataSheet: String
-    deleted: Boolean
-    createdAt: Date
-    updatedAt: Date
-
+    id: String;
+    names?: String;
+    category?: String;
+    description?: String;
+    details1: String;
+    details2?: String;
+    brand: String;
+    images: Array<String>;
+    dataSheet: String;
+    deleted: Boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const Item = new Schema<ItemAttributes>(
     {
-
         names: {
-            type: String
+            type: String,
         },
         category: {
-            type: String
+            type: String,
         },
         description: {
-            type: String
+            type: String,
         },
         details1: {
-            type: String
+            type: String,
         },
         details2: {
-            type: String
+            type: String,
         },
         brand: {
-            type: String
+            type: String,
         },
         images: {
-            type: [{ type: String }]
+            type: [{ type: String }],
         },
         dataSheet: {
-            type: String
+            type: String,
         },
         deleted: {
-            type: Boolean
-        }
+            type: Boolean,
+        },
     },
     {
         timestamps: {
             createdAt: true,
-            updatedAt: true
+            updatedAt: true,
         },
         versionKey: false,
         toJSON: {
             transform(_, ret) {
-                ret.id = ret._id.toString()
-                ret.updatedAt = ret.updatedAt.toISOString()
-                delete ret._id
-                delete ret.__v
+                ret.id = ret._id.toString();
+                ret.updatedAt = ret.updatedAt.toISOString();
+                delete ret._id;
+                delete ret.__v;
             },
-            virtuals: true
-        }
+            virtuals: true,
+        },
     }
-)
+);
 
-const ItemModel = model<ItemAttributes>('Items', Item)
+const ItemModel = model<ItemAttributes>("Items", Item);
 
-export { ItemModel }
+export { ItemModel };

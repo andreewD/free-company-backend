@@ -1,25 +1,25 @@
 import { Response, Request, Router, NextFunction } from "express";
-import { idCatSchema, idSchema, newcategoriesSchema } from "./schemas";
+import { idCatSchema, idSchema, newbrandsSchema } from "./schemas";
 import { ValidationError } from "joi";
 
 import httpErrors from "http-errors";
-import { CategoriesService } from "services";
+import { BrandsService } from "services";
 import { response } from "network";
 import { CustomError, GE } from "utils";
 
-const Categories = Router();
+const Brands = Router();
 
-// General methods for Categoriess path
-Categories.route("/categories")
+// General methods for Brands path
+Brands.route("/brands")
     .post(
         async (req: Request, res: Response, next: NextFunction): Promise<void> => {
             const {
                 body: { args },
             } = req;
             try {
-                await newcategoriesSchema.validateAsync(args);
-                const us = new CategoriesService(args);
-                const result = await us.process({ type: "newCategories" });
+                await newbrandsSchema.validateAsync(args);
+                const us = new BrandsService(args);
+                const result = await us.process({ type: "newBrands" });
                 response({ error: false, message: result, res, status: 201 });
             } catch (e) {
                 let errors: string[] = [];
@@ -42,7 +42,7 @@ Categories.route("/categories")
     )
     .get(
         async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-            const us = new CategoriesService();
+            const us = new BrandsService();
             try {
                 const result = await us.process({ type: "getAll" });
                 response({ error: false, message: result, res, status: 200 });
@@ -66,8 +66,8 @@ Categories.route("/categories")
         }
     );
 
-// Get Categories by id
-Categories.route("/categories/:id").get(
+// Get Brands by id
+Brands.route("/brands/:id").get(
     async (req: Request, res: Response, next: NextFunction) => {
         const {
             params: { id },
@@ -75,7 +75,7 @@ Categories.route("/categories/:id").get(
         try {
             await idCatSchema.validateAsync(id);
 
-            const us = new CategoriesService({ id });
+            const us = new BrandsService({ id });
             const result = await us.process({ type: "getOne" });
             response({ error: false, message: result, res, status: 200 });
         } catch (e) {
@@ -98,4 +98,4 @@ Categories.route("/categories/:id").get(
     }
 );
 
-export { Categories };
+export { Brands };
