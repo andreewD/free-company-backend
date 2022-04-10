@@ -16,8 +16,10 @@ export const newItemSchema = Joi.object().keys({
 })
 
 export const getAllItemsSchema = Joi.object().keys({
-    category: Joi.string().required().allow(null),
-    brand: Joi.string().required().allow(null),
+    // category: Joi.string().required().allow(null),
+    // brand: Joi.string().required().allow(null),
+    category: Joi.array().items(Joi.string()),
+    brand: Joi.array().items(Joi.string()),
     page: Joi.number().required(),
     size: Joi.number().required()
 })

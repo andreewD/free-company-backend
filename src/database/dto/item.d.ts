@@ -25,8 +25,8 @@ interface DtoItemNew {
 // }
 
 interface DtoFindAll {
-    brand: string
-    category: string
+    brand: Array<string>
+    category: Array<string>
     page: number
     size: number
 }
