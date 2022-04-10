@@ -2,24 +2,20 @@ import httpErrors from "http-errors";
 import { ItemModel } from "database";
 import { errorHandling } from "./utils";
 import { GE } from "utils";
-
 type Process = {
     type:
     | "getOne"
     | "getAll"
     | "newItem"
-    | "deleteItem"
     | "updateItem"
-    | "getByBrand"
-    | "getByCategory";
 };
 
 type ItemRequest =
     | DtoItemFind
     | DtoItemNew
+    | DtoFindAll
     | null
-    | DtoFindByBrand
-    | DtoFindByCategory;
+
 type ItemResponse = ItemResult;
 
 class ItemService {
@@ -37,10 +33,6 @@ class ItemService {
                 return await this._getOne();
             case "newItem":
                 return await this._newItem();
-            case "getByBrand":
-                return await this._getByBrand();
-            case "getByCategory":
-                return await this._getByCategory();
             default:
                 throw new httpErrors.InternalServerError();
         }
@@ -50,7 +42,6 @@ class ItemService {
         try {
             const { id } = this._args as DtoItemFind;
             const Items = await ItemModel.findById(id);
-
             const response = Items;
             return response;
         } catch (error) {
@@ -58,35 +49,50 @@ class ItemService {
         }
     }
     private async _getAll(): Promise<ItemResult[] | any> {
-        try {
-            const Items = await ItemModel.find({});
-            const response = Items;
-            return response;
-        } catch (error) {
-            return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
-        }
-    }
-    private async _getByBrand(): Promise<ItemResult[] | any> {
-        try {
-            const { brand } = this._args as DtoFindByBrand;
-            const Items = await ItemModel.find({ brand: brand });
-            const response = Items;
-            return response;
-        } catch (error) {
-            return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
+        const { category, brand, page, size } = this._args as DtoFindAll;
+        const options = {
+            page: page,
+            limit: size,
+        };
+        if (!!category && !!brand) {
+            const Items = await ItemModel.paginate({ category: category, brand: brand }, options);
+            try {
+                const response = Items;
+                return response;
+            } catch (error) {
+                return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            if (!!category) {
+                const Items = await ItemModel.paginate({ category: category }, options);
+                try {
+                    const response = Items;
+                    return response;
+                } catch (error) {
+                    return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
+                }
+            } else {
+                if (!!brand) {
+                    const Items = await ItemModel.paginate({ brand: brand }, options);
+                    try {
+                        const response = Items;
+                        return response;
+                    } catch (error) {
+                        return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
+                    }
+                } else {
+                    const Items = await ItemModel.paginate({}, options);
+                    try {
+                        const response = Items;
+                        return response;
+                    } catch (error) {
+                        return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
+                    }
+                }
+            }
         }
     }
 
-    private async _getByCategory(): Promise<ItemResult[] | any> {
-        try {
-            const { category } = this._args as DtoFindByCategory;
-            const Items = await ItemModel.find({ category: category });
-            const response = Items;
-            return response;
-        } catch (error) {
-            return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     private async _newItem(): Promise<ItemResult[] | any> {
         try {
@@ -111,6 +117,7 @@ class ItemService {
                 brand: brand,
                 dataSheet: dataSheet,
                 deleted: false,
+                stock: true
             });
             await Items.save();
             return Items;

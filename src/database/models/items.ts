@@ -1,4 +1,5 @@
-import { model, Schema } from "mongoose";
+import { model, PaginateModel, Schema } from "mongoose";
+import paginate from 'mongoose-paginate-v2';
 interface ItemAttributes {
     id: String;
     names?: String;
@@ -10,6 +11,7 @@ interface ItemAttributes {
     images: Array<String>;
     dataSheet: String;
     deleted: Boolean;
+    stock: Boolean;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -43,6 +45,9 @@ const Item = new Schema<ItemAttributes>(
         deleted: {
             type: Boolean,
         },
+        stock: {
+            type: Boolean
+        }
     },
     {
         timestamps: {
@@ -61,7 +66,7 @@ const Item = new Schema<ItemAttributes>(
         },
     }
 );
-
-const ItemModel = model<ItemAttributes>("Items", Item);
+Item.plugin(paginate)
+const ItemModel = model<ItemAttributes, PaginateModel<ItemAttributes>>("Items", Item);
 
 export { ItemModel };

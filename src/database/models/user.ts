@@ -7,6 +7,8 @@ interface UserAttributes {
     email?: String
     password?: String
     deleted: Boolean
+    role: String
+    profilePic: String
     createdAt: Date
     updatedAt: Date
 }
@@ -23,11 +25,19 @@ const User = new Schema<UserAttributes>(
         },
         email: {
             required: true,
+            unique: true,
             type: String
         },
         password: {
             required: true,
             select: false,
+            type: String
+        },
+        role: {
+            required: true,
+            type: String
+        },
+        profilePic: {
             type: String
         },
         deleted: {

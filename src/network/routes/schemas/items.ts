@@ -12,14 +12,12 @@ export const newItemSchema = Joi.object().keys({
     dataSheet: Joi.string().required(),
     details1: Joi.string().allow(null, ''),
     details2: Joi.string().allow(null, ''),
-    brand: Joi.string().required(),
-    deleted: Joi.boolean().required()
-})
-
-export const getItemByBrandSchema = Joi.object().keys({
     brand: Joi.string().required()
 })
 
-export const getItemByCategorySchema = Joi.object().keys({
-    category: Joi.string().required()
+export const getAllItemsSchema = Joi.object().keys({
+    category: Joi.string().required().allow(null),
+    brand: Joi.string().required().allow(null),
+    page: Joi.number().required(),
+    size: Joi.number().required()
 })
