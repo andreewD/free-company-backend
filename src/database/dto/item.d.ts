@@ -17,12 +17,20 @@ interface DtoItemNew {
     images?: Array<string>
     dataSheet?: string
 }
-interface DtoFindByBrand {
-    brand: String
+// interface DtoFindByBrand {
+//     brand: String
+// }
+// interface DtoFindByCategory {
+//      brand: String
+// }
+
+interface DtoFindAll {
+    brand: string
+    category: string
+    page: number
+    size: number
 }
-interface DtoFindByCategory {
-    category: String
-}
+
 // Interface for returning Item's data
 interface ItemResult {
     id: string

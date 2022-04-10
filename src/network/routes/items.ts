@@ -2,8 +2,7 @@ import { Response, Request, Router, NextFunction } from "express";
 import {
     idSchema,
     newItemSchema,
-    getItemByBrandSchema,
-    getItemByCategorySchema,
+    getAllItemsSchema
 } from "./schemas";
 import { ValidationError } from "joi";
 
@@ -22,33 +21,8 @@ Item.route("/items")
                 body: { args },
             } = req;
             try {
-                await newItemSchema.validateAsync(args);
+                await getAllItemsSchema.validateAsync(args);
                 const us = new ItemService(args);
-                const result = await us.process({ type: "newItem" });
-                response({ error: false, message: result, res, status: 201 });
-            } catch (e) {
-                let errors: string[] = [];
-
-                if (e instanceof ValidationError)
-                    errors = e.details.map(({ message }) => message);
-
-                if (e instanceof CustomError && e.errors) return next(e);
-
-                if (e instanceof httpErrors.HttpError) return next(e);
-
-                const error = new CustomError(
-                    GE.INTERNAL_SERVER_ERROR,
-                    errors.length > 0 ? errors : [GE.INTERNAL_SERVER_ERROR]
-                );
-                console.log({ error });
-                next(error);
-            }
-        }
-    )
-    .get(
-        async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-            const us = new ItemService();
-            try {
                 const result = await us.process({ type: "getAll" });
                 response({ error: false, message: result, res, status: 200 });
             } catch (e) {
@@ -70,6 +44,38 @@ Item.route("/items")
             }
         }
     );
+
+Item.route("/item/new").post(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const {
+            body: { args },
+        } = req;
+        try {
+            await newItemSchema.validateAsync(args);
+            const us = new ItemService(args);
+            const result = await us.process({ type: "newItem" });
+            response({ error: false, message: result, res, status: 201 });
+        } catch (e) {
+            let errors: string[] = [];
+
+            if (e instanceof ValidationError)
+                errors = e.details.map(({ message }) => message);
+
+            if (e instanceof CustomError && e.errors) return next(e);
+
+            if (e instanceof httpErrors.HttpError) return next(e);
+
+            const error = new CustomError(
+                GE.INTERNAL_SERVER_ERROR,
+                errors.length > 0 ? errors : [GE.INTERNAL_SERVER_ERROR]
+            );
+            console.log({ error });
+            next(error);
+        }
+    }
+)
+
+
 
 // Get Item by id
 Item.route("/item/:id").get(
@@ -100,66 +106,5 @@ Item.route("/item/:id").get(
             next(error);
         }
     }
-);
-
-Item.route("/item/brand").post(
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        const {
-            body: { args },
-        } = req;
-        try {
-            await getItemByBrandSchema.validateAsync(args);
-            const us = new ItemService(args);
-            const result = await us.process({ type: "getByBrand" });
-            response({ error: false, message: result, res, status: 201 });
-        } catch (e) {
-            let errors: string[] = [];
-
-            if (e instanceof ValidationError)
-                errors = e.details.map(({ message }) => message);
-
-            if (e instanceof CustomError && e.errors) return next(e);
-
-            if (e instanceof httpErrors.HttpError) return next(e);
-
-            const error = new CustomError(
-                GE.INTERNAL_SERVER_ERROR,
-                errors.length > 0 ? errors : [GE.INTERNAL_SERVER_ERROR]
-            );
-            console.log({ error });
-            next(error);
-        }
-    }
-);
-
-Item.route("/item/category").post(
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-        const {
-            body: { args },
-        } = req;
-        try {
-            await getItemByCategorySchema.validateAsync(args);
-            const us = new ItemService(args);
-            const result = await us.process({ type: "getByCategory" });
-            response({ error: false, message: result, res, status: 201 });
-        } catch (e) {
-            let errors: string[] = [];
-
-            if (e instanceof ValidationError)
-                errors = e.details.map(({ message }) => message);
-
-            if (e instanceof CustomError && e.errors) return next(e);
-
-            if (e instanceof httpErrors.HttpError) return next(e);
-
-            const error = new CustomError(
-                GE.INTERNAL_SERVER_ERROR,
-                errors.length > 0 ? errors : [GE.INTERNAL_SERVER_ERROR]
-            );
-            console.log({ error });
-            next(error);
-        }
-    }
-);
-
+)
 export { Item };

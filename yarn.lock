@@ -514,6 +514,13 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
+"@types/mongoose-paginate-v2@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@types/mongoose-paginate-v2/-/mongoose-paginate-v2-1.4.3.tgz#37ce0de55d008cb79219ec6b280392846ceb33c1"
+  integrity sha512-FmRDvLpVhRR1MT255R8N1lzYlwrPtNN7d/ZhnkrnyMQ1u3iyc2z9KaQi4y1AuCFdnK8IdTpw3jbRTcUSsjp5BQ==
+  dependencies:
+    mongoose "^6.0.13"
+
 "@types/mongoose@^5.11.97":
   version "5.11.97"
   resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.11.97.tgz#80b0357f3de6807eb597262f52e49c3e13ee14d8"
@@ -3521,10 +3528,28 @@ mongodb@4.3.1:
   optionalDependencies:
     saslprep "^1.0.3"
 
+mongoose-paginate-v2@^1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/mongoose-paginate-v2/-/mongoose-paginate-v2-1.6.3.tgz#50a96752b84a9456fef850b4207cc8b3867e98ac"
+  integrity sha512-wxIOcZL7V3+yHIkdTcDk+MtPxjDacEmrZ/4NpwgvOmmEm9SWWsBKRyPd/EmHlRUzk3ylr7fy4QEje1VMg0qpZA==
+
 mongoose@*, mongoose@^6.2.9:
   version "6.2.9"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.2.9.tgz#6318dceeebdd23d30a5a414a98bdfeab13fc83ef"
   integrity sha512-6ApgF3rKYah5pUEO/1H+QrT0GT05OR7FprtVM45yzcrT/IKKlXizPyttrMiK1mLPt+55pGU7PMsBWY7yx/xZ4g==
+  dependencies:
+    bson "^4.2.2"
+    kareem "2.3.5"
+    mongodb "4.3.1"
+    mpath "0.8.4"
+    mquery "4.0.2"
+    ms "2.1.3"
+    sift "16.0.0"
+
+mongoose@^6.0.13:
+  version "6.2.10"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.2.10.tgz#ba401b710d7b877453389d4ad7347c272e8ff794"
+  integrity sha512-Yp+6UH5M0AlxAVGdC2/Deq0St+2qW73oKCnhJDr83bOZ12eflTLTT5uQF0p6KzvtFj86XWbq/7ApvO4yW6h1sA==
   dependencies:
     bson "^4.2.2"
     kareem "2.3.5"
