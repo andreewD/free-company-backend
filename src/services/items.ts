@@ -50,11 +50,12 @@ class ItemService {
     }
     private async _getAll(): Promise<ItemResult[] | any> {
         const { category, brand, page, size } = this._args as DtoFindAll;
+
         const options = {
             page: page,
             limit: size,
         };
-        if (!!category && !!brand) {
+        if (category.length > 0 && brand.length > 0) {
             const Items = await ItemModel.paginate({ category: category, brand: brand }, options);
             try {
                 const response = Items;
@@ -63,7 +64,7 @@ class ItemService {
                 return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
             }
         } else {
-            if (!!category) {
+            if (category.length > 0) {
                 const Items = await ItemModel.paginate({ category: category }, options);
                 try {
                     const response = Items;
@@ -72,7 +73,7 @@ class ItemService {
                     return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
                 }
             } else {
-                if (!!brand) {
+                if (brand.length > 0) {
                     const Items = await ItemModel.paginate({ brand: brand }, options);
                     try {
                         const response = Items;
