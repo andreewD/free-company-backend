@@ -21,5 +21,6 @@ export const getAllItemsSchema = Joi.object().keys({
     category: Joi.array().items(Joi.string()),
     brand: Joi.array().items(Joi.string()),
     page: Joi.number().required(),
-    size: Joi.number().required()
+    size: Joi.number().required(),
+    sort: Joi.string().required().allow('', null)
 })
