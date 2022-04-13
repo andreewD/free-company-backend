@@ -49,48 +49,60 @@ class ItemService {
         }
     }
     private async _getAll(): Promise<ItemResult[] | any> {
-        const { category, brand, page, size } = this._args as DtoFindAll;
+        const { category, brand, page, size, sort } = this._args as DtoFindAll;
 
-        const options = {
-            page: page,
-            limit: size,
-        };
-        if (category.length > 0 && brand.length > 0) {
-            const Items = await ItemModel.paginate({ category: category, brand: brand }, options);
-            try {
-                const response = Items;
-                return response;
-            } catch (error) {
-                return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
-            }
+        let options
+
+        if (sort === 'desc') {
+            options = {
+                sort: { names: -1 },
+                page: page,
+                limit: size,
+            };
         } else {
-            if (category.length > 0) {
-                const Items = await ItemModel.paginate({ category: category }, options);
+            options = {
+                sort: { names: 1 },
+                page: page,
+                limit: size,
+            };
+        }
+
+        switch (true) {
+            case (category.length > 0 && brand.length > 0):
+                const ItemsFilter1 = await ItemModel.paginate({ category: category, brand: brand }, options);
                 try {
-                    const response = Items;
+                    const response = ItemsFilter1;
                     return response;
                 } catch (error) {
                     return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
                 }
-            } else {
-                if (brand.length > 0) {
-                    const Items = await ItemModel.paginate({ brand: brand }, options);
-                    try {
-                        const response = Items;
-                        return response;
-                    } catch (error) {
-                        return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
-                    }
-                } else {
-                    const Items = await ItemModel.paginate({}, options);
-                    try {
-                        const response = Items;
-                        return response;
-                    } catch (error) {
-                        return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
-                    }
+                break;
+            case (category.length > 0 && brand.length === 0):
+                const ItemsFilter2 = await ItemModel.paginate({ category: category }, options);
+                try {
+                    const response = ItemsFilter2;
+                    return response;
+                } catch (error) {
+                    return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
                 }
-            }
+                break
+            case (category.length === 0 && brand.length > 0):
+                const ItemsFilter3 = await ItemModel.paginate({ brand: brand }, options);
+                try {
+                    const response = ItemsFilter3;
+                    return response;
+                } catch (error) {
+                    return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
+                }
+            default:
+                const ItemsFilter4 = await ItemModel.paginate({}, options);
+                try {
+                    const response = ItemsFilter4;
+                    return response;
+                } catch (error) {
+                    return errorHandling(error, GE.INTERNAL_SERVER_ERROR);
+                }
+                break;
         }
     }
 

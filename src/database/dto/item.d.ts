@@ -29,6 +29,7 @@ interface DtoFindAll {
     category: Array<string>
     page: number
     size: number
+    sort: string
 }
 
 // Interface for returning Item's data
