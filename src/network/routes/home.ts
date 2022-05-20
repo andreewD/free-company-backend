@@ -8,7 +8,7 @@ const Home = Router()
 Home.route('').get((req: Request, res: Response) => {
     response({
         error: false,
-        message: 'Welcome to Imcetron Backend!',
+        message: 'Welcome to free company Backend!',
         res,
         status: 200
     })
